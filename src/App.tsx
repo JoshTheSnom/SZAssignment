@@ -4,9 +4,16 @@ import { useState, useEffect } from 'react';
 
 const API_URL = 'http://localhost:5178/data'
 
+export interface TableData {
+    id: number
+    label: string | null
+    datum: string //is supposed to be date
+    name: string | null
+}
+
 
 function App() {
-    const [table, setTable] = useState([]);
+    const [table, setTable] = useState<TableData[]>([]);
     useEffect(() => {
         fetch(API_URL)
             .then((res) => {
@@ -26,7 +33,7 @@ function App() {
         </div>
 
         <div>
-            <pre>{JSON.stringify(table, null, 1)}</pre>
+            {/*<pre>{JSON.stringify(table, null, 2)}</pre>*/}
         </div>
         <table>
             <thead>
@@ -38,10 +45,14 @@ function App() {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                {/* table content */}
-
-                </tr>
+                {table.map(( item, index) => (
+                    <tr key={index}>
+                        <td>{item.id}</td>
+                        <td>{item.label}</td>
+                        <td>{item.datum}</td>
+                        <td>{item.name}</td>
+                    </tr>
+                    ))}
             </tbody>
 
         </table>
