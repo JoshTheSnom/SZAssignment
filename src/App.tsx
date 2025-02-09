@@ -1,74 +1,96 @@
-import './App.css'
-import {useState, useEffect} from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import {createTheme, ThemeProvider, styled} from '@mui/material/styles';
+import "./App.css";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import SearchIcon from "@mui/icons-material/Search";
+import {Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from "@mui/material";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import "dayjs/locale/cs";
+import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {useEffect, useState} from "react";
 
-const API_URL = 'http://localhost:5178/data'
-const darkTheme = createTheme({palette: {mode: 'dark'}});
+const API_URL = "http://localhost:5178/data";
+const darkTheme = createTheme({ palette: { mode: "dark" } });
 
 export interface TableData {
-    id: number
-    label: string | null
-    datum: string //is supposed to be date
-    name: string | null
+	id: number;
+	label: string | null;
+	datum: string; //is supposed to be date
+	name: string | null;
 }
-
 
 function App() {
-    const [table, setTable] = useState<TableData[]>([]);
-    useEffect(() => {
-        fetch(API_URL)
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                console.log(data);
-                setTable(data);
-            });
-    }, []);
+	const [table, setTable] = useState<TableData[]>([]);
+	useEffect(() => {
+		fetch(API_URL)
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				console.log(data);
+				setTable(data);
+			});
+	}, []);
 
+	return (
+		<>
+			<ThemeProvider theme={darkTheme}>
+				<Stack spacing={1}>
+					<Stack direction="row" spacing={30}>
+						<Stack direction="row" spacing={2}>
+							<LocalizationProvider
+								dateAdapter={AdapterDayjs}
+								adapterLocale="cs"
+							>
+								<DemoContainer components={["DateTimePicker"]}>
+									<DateTimePicker label="Datum od" />
+								</DemoContainer>
+								<DemoContainer components={["DateTimePicker"]}>
+									<DateTimePicker label="Datum do" />
+								</DemoContainer>
+							</LocalizationProvider>
+						</Stack>
+						<Stack direction="row" paddingTop={1} spacing={2}>
+							<Button
+								size="small"
+								variant="contained"
+								endIcon={<FileDownloadIcon />}
+							>
+								.csv
+							</Button>
+							<Button size="small" variant="outlined" endIcon={<SearchIcon />}>
+								Search
+							</Button>
+						</Stack>
+					</Stack>
 
-    return (
-        <>
-            <div>
-                <p>Lorem ipsum</p>
-            </div>
-            <div>
-                {/*<pre>{JSON.stringify(table, null, 2)}</pre>*/}
-            </div>
-            <ThemeProvider theme={darkTheme}>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>ID</TableCell>
-                                <TableCell>Label</TableCell>
-                                <TableCell>Datum</TableCell>
-                                <TableCell>Name</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {table.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{item.label}</TableCell>
-                                    <TableCell>{item.datum}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </ThemeProvider>
-
-        </>
-    )
+					<TableContainer component={Paper}>
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>ID</TableCell>
+									<TableCell>Label</TableCell>
+									<TableCell>Datum</TableCell>
+									<TableCell>Name</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{table.map((item) => (
+									<TableRow key={item.id}>
+										<TableCell>{item.id}</TableCell>
+										<TableCell>{item.label}</TableCell>
+										<TableCell>{item.datum}</TableCell>
+										<TableCell>{item.name}</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Stack>
+			</ThemeProvider>
+		</>
+	);
 }
 
-export default App
+export default App;
