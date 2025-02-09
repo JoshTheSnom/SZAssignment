@@ -91,7 +91,11 @@ function App() {
 					<TableContainer component={Paper}>
 						<Table size="small">
 							<TableHead>
-								<TableRow>
+								<TableRow
+									sx={{
+										backgroundColor: "#111",
+									}}
+								>
 									<TableCell>ID</TableCell>
 									<TableCell>Label</TableCell>
 									<TableCell>Datum</TableCell>
