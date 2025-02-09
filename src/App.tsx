@@ -1,14 +1,25 @@
 import "./App.css";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchIcon from "@mui/icons-material/Search";
-import {Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from "@mui/material";
+import {
+    Button,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+} from "@mui/material";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import "dayjs/locale/cs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {useEffect, useState} from "react";
+import {type ChangeEvent, useEffect, useState} from "react";
 
 const API_URL = "http://localhost:5178/data";
 const darkTheme = createTheme({ palette: { mode: "dark" } });
@@ -21,6 +32,18 @@ export interface TableData {
 }
 
 function App() {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	const handleChangePage = (_event: unknown, newPage: number) => {
+		setPage(newPage);
+	};
+
+	const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
+		setRowsPerPage(+event.target.value);
+		setPage(0);
+	};
+
 	const [table, setTable] = useState<TableData[]>([]);
 	useEffect(() => {
 		fetch(API_URL)
@@ -66,7 +89,7 @@ function App() {
 					</Stack>
 
 					<TableContainer component={Paper}>
-						<Table>
+						<Table size="small">
 							<TableHead>
 								<TableRow>
 									<TableCell>ID</TableCell>
@@ -76,17 +99,28 @@ function App() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{table.map((item) => (
-									<TableRow key={item.id}>
-										<TableCell>{item.id}</TableCell>
-										<TableCell>{item.label}</TableCell>
-										<TableCell>{item.datum}</TableCell>
-										<TableCell>{item.name}</TableCell>
-									</TableRow>
-								))}
+								{table
+									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+									.map((item) => (
+										<TableRow key={item.id}>
+											<TableCell>{item.id}</TableCell>
+											<TableCell>{item.label}</TableCell>
+											<TableCell>{item.datum}</TableCell>
+											<TableCell>{item.name}</TableCell>
+										</TableRow>
+									))}
 							</TableBody>
 						</Table>
 					</TableContainer>
+					<TablePagination
+						rowsPerPageOptions={[10, 20, 50, 150]}
+						component="div"
+						count={table.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						onPageChange={handleChangePage}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Stack>
 			</ThemeProvider>
 		</>
