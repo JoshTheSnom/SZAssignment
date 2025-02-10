@@ -22,6 +22,8 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import type {Dayjs} from "dayjs";
 import dayjs from "dayjs";
 import {type ChangeEvent, useEffect, useState} from "react";
+import {CSVLink} from "react-csv";
+import * as XLSX from "xlsx";
 
 const API_URL = "http://localhost:5178/data";
 const darkTheme = createTheme({ palette: { mode: "dark" } });
@@ -76,6 +78,20 @@ function App() {
 			});
 	}, []);
 
+	const exportToXLSX = () => {
+		const worksheet = XLSX.utils.json_to_sheet(filteredTable);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+		XLSX.writeFile(workbook, "exported_data.xlsx");
+	};
+
+	const headers = [
+		{ label: "ID", key: "id" },
+		{ label: "Label", key: "label" },
+		{ label: "Datum", key: "datum" },
+		{ label: "Name", key: "name" },
+	];
+
 	return (
 		<>
 			<ThemeProvider theme={darkTheme}>
@@ -105,9 +121,27 @@ function App() {
 								size="small"
 								variant="contained"
 								endIcon={<FileDownloadIcon />}
+								component="span"
+								sx={{ height: "100%" }} //cheap fix, but it works
+								onClick={exportToXLSX}
 							>
-								.csv
+								.xlsx
 							</Button>
+							<CSVLink
+								data={filteredTable}
+								headers={headers}
+								filename={"exported_data.csv"}
+							>
+								<Button
+									size="small"
+									variant="contained"
+									endIcon={<FileDownloadIcon />}
+									component="span"
+									sx={{ height: "100%" }} //cheap fix, but it works
+								>
+									.csv
+								</Button>
+							</CSVLink>
 							<Button
 								size="small"
 								variant="outlined"
