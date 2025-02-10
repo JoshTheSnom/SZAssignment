@@ -2,16 +2,16 @@ import "./App.css";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-    Button,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
+	Button,
+	Paper,
+	Stack,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
 } from "@mui/material";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -19,6 +19,8 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import "dayjs/locale/cs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import type {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import {type ChangeEvent, useEffect, useState} from "react";
 
 const API_URL = "http://localhost:5178/data";
@@ -34,6 +36,10 @@ export interface TableData {
 function App() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [table, setTable] = useState<TableData[]>([]);
+	const [filteredTable, setFilteredTable] = useState<TableData[]>([]);
+	const [fromDate, setFromDate] = useState<Dayjs | null>(null);
+	const [toDate, setToDate] = useState<Dayjs | null>(null);
 
 	const handleChangePage = (_event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -44,7 +50,20 @@ function App() {
 		setPage(0);
 	};
 
-	const [table, setTable] = useState<TableData[]>([]);
+	const handleSearch = () => {
+		const filtered = table.filter((item) => {
+			const itemDate = dayjs(item.datum);
+
+			return (
+				(itemDate.isAfter(fromDate) ||
+					itemDate.isSame(fromDate) ||
+					!fromDate) &&
+				(itemDate.isBefore(toDate) || itemDate.isSame(toDate) || !toDate)
+			);
+		});
+		setFilteredTable(filtered);
+	};
+
 	useEffect(() => {
 		fetch(API_URL)
 			.then((res) => {
@@ -53,6 +72,7 @@ function App() {
 			.then((data) => {
 				console.log(data);
 				setTable(data);
+				setFilteredTable(data);
 			});
 	}, []);
 
@@ -67,10 +87,16 @@ function App() {
 								adapterLocale="cs"
 							>
 								<DemoContainer components={["DateTimePicker"]}>
-									<DateTimePicker label="Datum od" />
+									<DateTimePicker
+										label="Datum od"
+										onChange={(newValue) => setFromDate(newValue)}
+									/>
 								</DemoContainer>
 								<DemoContainer components={["DateTimePicker"]}>
-									<DateTimePicker label="Datum do" />
+									<DateTimePicker
+										label="Datum do"
+										onChange={(newValue) => setToDate(newValue)}
+									/>
 								</DemoContainer>
 							</LocalizationProvider>
 						</Stack>
@@ -82,7 +108,12 @@ function App() {
 							>
 								.csv
 							</Button>
-							<Button size="small" variant="outlined" endIcon={<SearchIcon />}>
+							<Button
+								size="small"
+								variant="outlined"
+								endIcon={<SearchIcon />}
+								onClick={handleSearch}
+							>
 								Search
 							</Button>
 						</Stack>
@@ -103,7 +134,7 @@ function App() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{table
+								{filteredTable
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 									.map((item) => (
 										<TableRow key={item.id}>
@@ -119,7 +150,7 @@ function App() {
 					<TablePagination
 						rowsPerPageOptions={[10, 20, 50, 150]}
 						component="div"
-						count={table.length}
+						count={filteredTable.length}
 						rowsPerPage={rowsPerPage}
 						page={page}
 						onPageChange={handleChangePage}
