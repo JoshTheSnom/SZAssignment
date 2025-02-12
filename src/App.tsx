@@ -17,7 +17,6 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import "dayjs/locale/cs";
-import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import type {Dayjs} from "dayjs";
 import dayjs from "dayjs";
@@ -40,8 +39,11 @@ function App() {
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [table, setTable] = useState<TableData[]>([]);
 	const [filteredTable, setFilteredTable] = useState<TableData[]>([]);
-	const [fromDate, setFromDate] = useState<Dayjs | null>(null);
-	const [toDate, setToDate] = useState<Dayjs | null>(null);
+	const [fromDate, setFromDate] = useState<Dayjs | undefined>(undefined);
+	const [toDate, setToDate] = useState<Dayjs | undefined>(undefined);
+	const [fromError, setFromError] = useState<string | null>(null);
+	const [toError, setToError] = useState<string | null>(null);
+	const [isFiltered, setIsFiltered] = useState<boolean | null>(false);
 
 	const handleChangePage = (_event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -56,6 +58,8 @@ function App() {
 		const filtered = table.filter((item) => {
 			const itemDate = dayjs(item.datum);
 
+			console.log("test");
+
 			return (
 				(itemDate.isAfter(fromDate) ||
 					itemDate.isSame(fromDate) ||
@@ -63,6 +67,7 @@ function App() {
 				(itemDate.isBefore(toDate) || itemDate.isSame(toDate) || !toDate)
 			);
 		});
+		setIsFiltered(true); //after first search, the table is considered filtered
 		setFilteredTable(filtered);
 	};
 
@@ -97,26 +102,49 @@ function App() {
 			<ThemeProvider theme={darkTheme}>
 				<Stack spacing={1}>
 					<Stack direction="row" spacing={30}>
-						<Stack direction="row" spacing={2}>
+						<Stack direction="row" spacing={2} paddingBottom={3}>
 							<LocalizationProvider
 								dateAdapter={AdapterDayjs}
 								adapterLocale="cs"
 							>
-								<DemoContainer components={["DateTimePicker"]}>
-									<DateTimePicker
-										label="Datum od"
-										onChange={(newValue) => setFromDate(newValue)}
-									/>
-								</DemoContainer>
-								<DemoContainer components={["DateTimePicker"]}>
-									<DateTimePicker
-										label="Datum do"
-										onChange={(newValue) => setToDate(newValue)}
-									/>
-								</DemoContainer>
+								<DateTimePicker
+									label="Datum od"
+									onChange={(newValue) => setFromDate(newValue || undefined)}
+									onError={() =>
+										setFromError("Datum od nemůže být později, než Datum do!")
+									}
+									maxDateTime={toDate}
+									slotProps={{
+										textField: {
+											helperText: fromError,
+										},
+									}}
+									sx={{ minWidth: 260 }}
+								/>
+
+								<DateTimePicker
+									label="Datum do"
+									onChange={(newValue) => setToDate(newValue || undefined)}
+									onError={() =>
+										setToError("Datum do nemůže být dříve, než Datum od!")
+									}
+									minDateTime={fromDate}
+									slotProps={{
+										textField: {
+											helperText: toError,
+										},
+									}}
+									sx={{ minWidth: 260 }}
+								/>
 							</LocalizationProvider>
 						</Stack>
-						<Stack direction="row" paddingTop={1} spacing={2}>
+
+						<Stack
+							direction="row"
+							paddingBottom={3}
+							spacing={2}
+							//sx={{ paddingBottom: "20px" }}
+						>
 							<Button
 								size="small"
 								variant="contained"
@@ -124,6 +152,7 @@ function App() {
 								component="span"
 								sx={{ height: "100%" }} //cheap fix, but it works
 								onClick={exportToXLSX}
+								disabled={!isFiltered}
 							>
 								.xlsx
 							</Button>
@@ -138,6 +167,7 @@ function App() {
 									endIcon={<FileDownloadIcon />}
 									component="span"
 									sx={{ height: "100%" }} //cheap fix, but it works
+									disabled={!isFiltered}
 								>
 									.csv
 								</Button>
@@ -147,6 +177,7 @@ function App() {
 								variant="outlined"
 								endIcon={<SearchIcon />}
 								onClick={handleSearch}
+								disabled={!!fromError || !!toError || (!toDate && !fromDate)}
 							>
 								Search
 							</Button>
