@@ -14,11 +14,13 @@ import { type ChangeEvent, useState } from "react";
 import type React from "react";
 import type { TableData } from "../App.tsx";
 
+//Definition for expected prop(s)
 interface DataTableProps {
 	data: TableData[];
 }
 
 const DataTable: React.FC<DataTableProps> = ({ data }) => {
+	//States for pagination
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -35,7 +37,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 
 	return (
 		<>
-			{/*I'd virtualize this table, but for 150 rows it does not matter*/}
+			{/*Simple table structure for displaying data*/}
 			<TableContainer component={Paper}>
 				<Table size="small">
 					<TableHead>
@@ -51,6 +53,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
+						{/*Paginated data mapping*/}
 						{data
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((item) => (
@@ -64,6 +67,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 					</TableBody>
 				</Table>
 			</TableContainer>
+			{/*Pagination controls*/}
 			<TablePagination
 				rowsPerPageOptions={[10, 20, 50, 150]}
 				component="div"

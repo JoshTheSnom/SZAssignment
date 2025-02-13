@@ -12,13 +12,16 @@ import Buttons from "./components/Buttons.tsx";
 import DataTable from "./components/DataTable.tsx";
 import DateFilters from "./components/DateFilters.tsx";
 
+//API endpoint for fetching data
 const API_URL = "http://localhost:5178/data";
+
+//Define dark theme using MUI's theme provider
 const darkTheme = createTheme({ palette: { mode: "dark" } });
 
 export interface TableData {
 	id: number;
 	label: string | null;
-	datum: string; //is supposed to be date
+	datum: string; //Represents date as a string
 	name: string | null;
 }
 
@@ -28,8 +31,9 @@ export interface Header {
 }
 
 function App() {
-	dayjs.locale("cs");
+	dayjs.locale("cs"); //Set dayjs locale to Czech throughout the whole app
 
+	//States for handling table data and filters
 	const [table, setTable] = useState<TableData[]>([]);
 	const [filteredTable, setFilteredTable] = useState<TableData[]>([]);
 	const [fromDate, setFromDate] = useState<Dayjs | undefined>(undefined);
@@ -38,23 +42,7 @@ function App() {
 	const [toError, setToError] = useState<string | null>(null);
 	const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
-	const handleSearch = () => {
-		const filtered = table.filter((item) => {
-			const itemDate = dayjs(item.datum);
-
-			console.log("test");
-
-			return (
-				(itemDate.isAfter(fromDate) ||
-					itemDate.isSame(fromDate) ||
-					!fromDate) &&
-				(itemDate.isBefore(toDate) || itemDate.isSame(toDate) || !toDate)
-			);
-		});
-		setIsFiltered(true); //after first search, the table is considered filtered
-		setFilteredTable(filtered);
-	};
-
+	//Fetch data on and sort it by ID
 	useEffect(() => {
 		fetch(API_URL)
 			.then((res) => {
@@ -62,12 +50,33 @@ function App() {
 			})
 			.then((data) => {
 				const typedData = data as TableData[];
-				const sortedData = typedData.sort((a, b) => a.id - b.id); //for now sorting by id
+				const sortedData = typedData.sort((a, b) => a.id - b.id);
 				setTable(sortedData);
 				setFilteredTable(sortedData);
 			});
 	}, []);
 
+	//Filter data based on selected date range
+	const handleSearch = () => {
+		const filtered = table.filter((item) => {
+			const itemDate = dayjs(item.datum);
+
+			//Check if item date falls within range
+			return (
+				(itemDate.isAfter(fromDate) ||
+					itemDate.isSame(fromDate) ||
+					!fromDate)
+				&&
+				(itemDate.isBefore(toDate) ||
+					itemDate.isSame(toDate) ||
+					!toDate)
+			);
+		});
+		setIsFiltered(true); //Mark that filtering has occurred
+		setFilteredTable(filtered);
+	};
+
+	//Export filtered data to XLSX file
 	const exportToXLSX = () => {
 		const worksheet = XLSX.utils.json_to_sheet(filteredTable);
 		const workbook = XLSX.utils.book_new();
@@ -75,6 +84,7 @@ function App() {
 		XLSX.writeFile(workbook, "exported_data.xlsx");
 	};
 
+	//Table headers definition
 	const headers: Header[] = [
 		{ label: "ID", key: "id" },
 		{ label: "Label", key: "label" },
@@ -88,6 +98,7 @@ function App() {
 				<ThemeProvider theme={darkTheme}>
 					<Stack spacing={1}>
 						<Stack direction="row" spacing={30}>
+							{/*Pass props to DateFilters component*/}
 							<DateFilters
 								{...{
 									fromDate,
@@ -101,6 +112,7 @@ function App() {
 								}}
 							/>
 
+							{/*Pass props to Buttons component for filtering and exporting*/}
 							<Buttons
 								{...{
 									filteredTable,
@@ -115,6 +127,7 @@ function App() {
 								}}
 							/>
 						</Stack>
+						{/*Display filtered data in the DataTable*/}
 						<DataTable data={filteredTable} />
 					</Stack>
 				</ThemeProvider>

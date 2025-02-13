@@ -6,6 +6,7 @@ import type React from "react";
 import { CSVLink } from "react-csv";
 import type { Header, TableData } from "../App.tsx";
 
+//Definition for expected props
 interface ButtonsProps {
 	filteredTable: TableData[];
 	headers: Header[];
@@ -30,25 +31,26 @@ const Buttons: React.FC<ButtonsProps> = ({
 }) => {
 	return (
 		<>
+			{/*Stack component for arranging buttons horizontally*/}
 			<Stack
 				direction="row"
 				paddingBottom={3}
 				spacing={2}
-				//sx={{ paddingBottom: "20px" }}
 			>
+				{/*Button for exporting to .xlsx, disabled if no filters are applied*/}
 				<Button
 					size="small"
 					variant="contained"
 					endIcon={<FileDownloadIcon />}
 					component="span"
-					sx={{ height: "100%" }} //cheap fix, but it works
+					sx={{ height: "100%" }} //Cheap fix for height alignment
 					onClick={exportToXLSX}
 					disabled={!isFiltered}
 				>
 					.xlsx
 				</Button>
-				{/*I have to conditionally render the link, since CSVLink cannot be disabled
-				and can't be put inside the button either. If I find a better solution, I'll change this.*/}
+
+				{/*Conditionally render CSV download button, as CSVLink can't be disabled*/}
 				{isFiltered ? (
 					<CSVLink
 						data={filteredTable}
@@ -60,22 +62,24 @@ const Buttons: React.FC<ButtonsProps> = ({
 							size="small"
 							variant="contained"
 							endIcon={<FileDownloadIcon />}
-							sx={{ height: "100%" }} //cheap fix, but it works
+							sx={{ height: "100%" }} //Cheap fix for height alignment
 						>
 							.csv
 						</Button>
 					</CSVLink>
 				) : (
+					//Disabled CSV button if no filters are applied
 					<Button
 						size="small"
 						variant="contained"
 						endIcon={<FileDownloadIcon />}
-						sx={{ height: "100%" }} //cheap fix, but it works
+						sx={{ height: "100%" }} //Cheap fix for height alignment
 						disabled
 					>
 						.csv
 					</Button>
 				)}
+				{/*Search button, disabled if there's an error in the date range or no dates set*/}
 				<Button
 					size="small"
 					variant="outlined"
