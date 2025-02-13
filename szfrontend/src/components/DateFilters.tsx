@@ -30,7 +30,7 @@ const DateFilters: React.FC<DateFiltersProps> = ({
 				label="Datum od"
 				onChange={(newValue) => setFromDate(newValue || undefined)}
 				onError={() =>
-					setFromError("Datum od nemůže být později, než Datum do!")
+					setFromError("Datum od nemůže být později než Datum do!")
 				}
 				maxDateTime={toDate}
 				slotProps={{
@@ -44,7 +44,7 @@ const DateFilters: React.FC<DateFiltersProps> = ({
 			<DateTimePicker
 				label="Datum do"
 				onChange={(newValue) => setToDate(newValue || undefined)}
-				onError={() => setToError("Datum do nemůže být dříve, než Datum od!")}
+				onError={() => setToError("Datum do nemůže být dříve než Datum od!")}
 				minDateTime={fromDate}
 				slotProps={{
 					textField: {

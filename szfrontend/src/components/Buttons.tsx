@@ -47,23 +47,35 @@ const Buttons: React.FC<ButtonsProps> = ({
 				>
 					.xlsx
 				</Button>
-				<CSVLink
-					data={filteredTable}
-					headers={headers}
-					separator={";"}
-					filename={"exported_data.csv"}
-				>
+				{/*I have to conditionally render the link, since CSVLink cannot be disabled
+				and can't be put inside the button either. If I find a better solution, I'll change this.*/}
+				{isFiltered ? (
+					<CSVLink
+						data={filteredTable}
+						headers={headers}
+						separator={";"}
+						filename={"exported_data.csv"}
+					>
+						<Button
+							size="small"
+							variant="contained"
+							endIcon={<FileDownloadIcon />}
+							sx={{ height: "100%" }} //cheap fix, but it works
+						>
+							.csv
+						</Button>
+					</CSVLink>
+				) : (
 					<Button
 						size="small"
 						variant="contained"
 						endIcon={<FileDownloadIcon />}
-						component="span"
 						sx={{ height: "100%" }} //cheap fix, but it works
-						disabled={!isFiltered}
+						disabled
 					>
 						.csv
 					</Button>
-				</CSVLink>
+				)}
 				<Button
 					size="small"
 					variant="outlined"

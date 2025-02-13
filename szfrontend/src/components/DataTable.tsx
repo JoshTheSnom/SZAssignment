@@ -13,6 +13,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import { type ChangeEvent, useState } from "react";
 import type React from "react";
 import type { TableData } from "../App.tsx";
+
 interface DataTableProps {
 	data: TableData[];
 }
