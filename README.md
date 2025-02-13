@@ -120,3 +120,7 @@ Aplikace je spravována pomocí **Gitu**, který je nutný pro stažení projekt
    ```
 
 4. **Aplikace by měla být dostupná** na [**http://localhost:5173/**](http://localhost:5173/) (nebo jiném portu, pokud je obsazený).
+
+---
+
+Původně jsem plánoval hostovat tuto aplikaci na Azure, ale nemám možnost založit tento server zdarma.
