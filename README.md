@@ -73,13 +73,7 @@ Aplikace je spravována pomocí **Gitu**, který je nutný pro stažení projekt
 1. Přesuňte se do složky backendu:
 
    ```sh
-   cd ../Example.Rest.Api
-   ```
-
-   V případě že jste aktuálně ve složce SZAssignment použijte příkaz:
-
-   ```sh
-   cd Example.Rest.Api
+   cd SZAssignment/Example.Rest.Api
    ```
 
 2. Instalaci závislostí proveďte příkazem:
@@ -103,7 +97,13 @@ Aplikace je spravována pomocí **Gitu**, který je nutný pro stažení projekt
 1. Přesuňte se do složky frontendu:
 
    ```sh
-   cd SZAssignment/szfrontend
+   cd ../szfrontend
+   ```
+
+   V případě že jste aktuálně ve složce SZAssignment použijte příkaz:
+
+   ```sh
+   cd szfrontend
    ```
 
 2. Instalaci závislostí proveďte příkazem:
