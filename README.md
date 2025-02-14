@@ -29,8 +29,6 @@ Aplikace běží na **Node.js**, což je nutné k jejímu spuštení.
 
    Tento příkaz by měl vrátit číslo verze, např. `11.1.0`.
 
----
-
 ### 2. Instalace .NET SDK
 
 Aplikace využívá backend postavený na **.NET 8.0 SDK**.
@@ -44,8 +42,6 @@ Aplikace využívá backend postavený na **.NET 8.0 SDK**.
    ```
 
    Tento příkaz by měl vrátit číslo verze, např. `8.0.130`.
-
----
 
 ### 3. Instalace **Git**
 
