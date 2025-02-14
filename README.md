@@ -60,7 +60,7 @@ Aplikace je spravována pomocí **Gitu**, který je nutný pro stažení projekt
    ```
 
    Tento příkaz by měl vrátit číslo verze, např. `git version 2.47.1.windows.2`.
-3. Zkopírujte projekt pomocí Gitu:
+3. Zkopírujte repozitář pomocí Gitu:
 
    ```sh
    git clone https://github.com/JoshTheSnom/SZAssignment.git
@@ -94,32 +94,28 @@ Aplikace je spravována pomocí **Gitu**, který je nutný pro stažení projekt
 
 ## Instalace závislostí a spuštění frontendu
 
-1. Přesuňte se do složky frontendu:
+1. Otevřete si nové okno nebo záložku příkazového řádku. Přesuňte se do stejného adresáře, ve kterém jste zkopíroval repozitář pomocí Gitu.
+
+2. Přesuňte se do složky frontendu:
 
    ```sh
-   cd ../szfrontend
+   cd SZAssignment/szfrontend
    ```
 
-   V případě že jste aktuálně ve složce SZAssignment použijte příkaz:
-
-   ```sh
-   cd szfrontend
-   ```
-
-2. Instalaci závislostí proveďte příkazem:
+3. Instalaci závislostí proveďte příkazem:
 
    ```sh
    npm install
    ```
 
    Tento krok může chvíli trvat - stáhne všechny potřebné knihovny.
-3. Spusťte frontend příkazem:
+4. Spusťte frontend příkazem:
 
    ```sh
    npm run dev
    ```
 
-4. **Aplikace by měla být dostupná** na [**http://localhost:5173/**](http://localhost:5173/) (nebo jiném portu, pokud je obsazený).
+5. **Aplikace by měla být dostupná** na [**http://localhost:5173/**](http://localhost:5173/) (nebo jiném portu, pokud je obsazený).
 
 ---
 
